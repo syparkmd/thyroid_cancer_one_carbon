@@ -753,7 +753,7 @@ cfl_cpm_dt %>% select(cell_id, tds_sm_group) %>%write_tsv(paste0(out_dir,'/tds_s
 tmp_meta <- thy.combined@meta.data %>% as.data.frame() %>% rownames_to_column('cell_id') %>% as_tibble()
 thy.combined@meta.data <- left_join(tmp_meta, cfl_cpm_dt %>% select(cell_id, tds_sm_group)) %>% as.data.frame() %>% column_to_rownames('cell_id')
 DimPlot(thy.combined, group.by="tds_sm_group", reduction='umap')
-ff4.tc.combined <- subset(thy.combined, subset = cancer_type != 'NT')
+ff4.tc.combined <- subset(thy.combined, subset = cancer_type != 'normal')
 
 umap_dt <- ff4.tc.combined@reductions$umap@cell.embeddings
 umap_dt <- umap_dt %>% as.data.frame %>% rownames_to_column('cell_id')
@@ -765,7 +765,7 @@ umap_dt <- left_join(umap_dt, tmp_meta %>% select(cell_id, tds_sm_group))
 Idents(ff4.tc.combined) <- 'tds_sm_group'
 g1=c('T_hi_SM_lo')
 g2=c('T_lo_SM_hi')  
-
+DefaultAssay(ff4.tc.combined) <- "RNA"
 mk <- FindMarkers(ff4.tc.combined, ident.1 = g1, ident.2=g2, min.pct = 0.25, 
                   max.cells.per.ident=2000, random.seed=1,
                   logfc.threshold = 0.15)
